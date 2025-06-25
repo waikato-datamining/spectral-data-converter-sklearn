@@ -1,2 +1,2 @@
-Visualization plugins for the spectral-data-converter library.
+Scikit-learn plugins for the spectral-data-converter library.
 
