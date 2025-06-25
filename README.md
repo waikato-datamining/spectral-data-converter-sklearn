@@ -1,5 +1,5 @@
 # spectral-data-converter-sklearn
-Scikit-learn plugins for the spectral-data-converter library.
+Scikit-learn plugins for the [spectral-data-converter](https://github.com/waikato-datamining/spectral-data-converter) library.
 
 ## Installation
 
