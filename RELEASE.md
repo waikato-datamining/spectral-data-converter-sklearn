@@ -30,5 +30,5 @@ Steps:
 
 * start new release (version: `vX.Y.Z`)
 * enter release notes, i.e., significant changes since last release
-* upload `spectral_data_converter_sklearn-X.Y.Z.tar.gz` previously generated with `setup.py`
+* upload `spectral_data_converter_vis-X.Y.Z.tar.gz` previously generated with `setup.py`
 * publish

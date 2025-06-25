@@ -1,1 +1,1 @@
-# sklearn plugins
+# visualization plugins
