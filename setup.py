@@ -13,7 +13,7 @@ def _read(f):
 
 
 setup(
-    name="spectral_data_converter_vis",
+    name="spectral_data_converter_sklearn",
     description="Scikit-learn plugins for the spectral-data-converter library.",
     long_description=(
             _read('DESCRIPTION.rst') + b'\n' +
