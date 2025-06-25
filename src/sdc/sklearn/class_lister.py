@@ -6,4 +6,7 @@ def list_classes() -> Dict[str, List[str]]:
         "seppl.io.Filter": [
             "sdc.sklearn.filter",
         ],
+        "seppl.io.Writer": [
+            "sdc.sklearn.writer",
+        ],
     }
