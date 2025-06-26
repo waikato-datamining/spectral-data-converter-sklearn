@@ -7,11 +7,12 @@ from wai.logging import LOGGING_WARNING
 
 from seppl import get_class
 from sdc.api import Spectrum2D, BatchWriter
+from sklearn.base import BaseEstimator
 
 
 class SklearnFit(BatchWriter):
 
-    def __init__(self, model: str = None, model_params: str = None,
+    def __init__(self, model: str = None, model_params: str = None, template: str = None,
                  target: str = None, output_file: str = None,
                  logger_name: str = None, logging_level: str = LOGGING_WARNING):
         """
@@ -21,6 +22,8 @@ class SklearnFit(BatchWriter):
         :type model: str
         :param model_params: the parameters of the model as JSON string
         :type model_params: str
+        :param template: the pickled model file to load and train instead of using classname/params
+        :type template: str
         :param target: the sample data field to use as output variable
         :type target: str
         :param output_file: where to pickle the model to
@@ -33,6 +36,7 @@ class SklearnFit(BatchWriter):
         super().__init__(logger_name=logger_name, logging_level=logging_level)
         self.model = model
         self.model_params = model_params
+        self.template = template
         self.target = target
         self.output_file = output_file
 
@@ -62,8 +66,9 @@ class SklearnFit(BatchWriter):
         :rtype: argparse.ArgumentParser
         """
         parser = super()._create_argparser()
-        parser.add_argument("-m", "--model", type=str, help="The classname of the model to build.", required=True, default=None)
+        parser.add_argument("-m", "--model", type=str, help="The classname of the model to build.", required=False, default=None)
         parser.add_argument("-p", "--model_params", metavar="JSON", type=str, help="The parameters of the model as JSON string.", required=False, default=None)
+        parser.add_argument("-T", "--template", metavar="FILE", type=str, help="The path to the pickled model template to load and train instead of classname/parameters.", required=False, default=None)
         parser.add_argument("-t", "--target", type=str, help="The name of the sample data field to use as output variable.", required=True, default=None)
         parser.add_argument("-o", "--output_file", metavar="FILE", type=str, help="The file to save the model to.", required=True, default=None)
         return parser
@@ -78,6 +83,7 @@ class SklearnFit(BatchWriter):
         super()._apply_args(ns)
         self.model = ns.model
         self.model_params = ns.model_params
+        self.template = ns.template
         self.target = ns.target
         self.output_file = ns.output_file
 
@@ -95,8 +101,8 @@ class SklearnFit(BatchWriter):
         Initializes the processing, e.g., for opening files or databases.
         """
         super().initialize()
-        if self.model is None:
-            raise Exception("No model classname specified!")
+        if (self.model is None) and (self.template is None):
+            raise Exception("Neither model classname nor model template specified!")
         if self.target is None:
             raise Exception("No sample data field specified!")
 
@@ -122,14 +128,29 @@ class SklearnFit(BatchWriter):
                 y.append(None)
 
         # instantiate model
-        try:
-            if (self.model_params is not None) and (self.model_params.startswith("{")):
-                model_params = json.loads(self.model_params)
-                model = get_class(self.model)(**model_params)
-            else:
-                model = get_class(self.model)()
-        except:
-            self.logger().error("Failed to instantiate class '%s' with parameters: %s" % (self.model, str(self.model_params)), exc_info=True)
+        if self.template is not None:
+            try:
+                path = self.session.expand_placeholders(self.template)
+                self.logger().info("Loading model template: %s" % path)
+                with open(path, "rb") as fp:
+                    model = pickle.load(fp)
+            except:
+                self.logger().error("Failed to load model template: %s" % self.template, exc_info=True)
+                return
+        else:
+            try:
+                if (self.model_params is not None) and (self.model_params.startswith("{")):
+                    model_params = json.loads(self.model_params)
+                    model = get_class(self.model)(**model_params)
+                else:
+                    model = get_class(self.model)()
+            except:
+                self.logger().error("Failed to instantiate class '%s' with parameters: %s" % (self.model, str(self.model_params)), exc_info=True)
+                return
+
+        # is it a sklearn model?
+        if not isinstance(model, BaseEstimator):
+            self.logger().error("Model is not derived from sklearn.base.BaseEstimator: %s" % str(type(model)))
             return
 
         # train model
