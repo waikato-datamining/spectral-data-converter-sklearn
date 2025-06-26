@@ -5,6 +5,7 @@ from typing import List
 from wai.logging import LOGGING_WARNING
 
 from sdc.api import flatten_list, make_list, Filter, Spectrum2D, safe_deepcopy
+from sklearn.base import BaseEstimator
 
 
 class SklearnPredict(Filter):
@@ -119,6 +120,11 @@ class SklearnPredict(Filter):
             except:
                 self.logger().error("Failed to load model from: %s" % path, exc_info=True)
                 return data
+
+        # is it a sklearn model?
+        if not isinstance(self._model, BaseEstimator):
+            self.logger().error("Model is not derived from sklearn.base.BaseEstimator: %s" % str(type(self._model)))
+            return data
 
         # make predictions
         for item in make_list(data):
