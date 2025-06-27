@@ -32,3 +32,10 @@ Steps:
 * enter release notes, i.e., significant changes since last release
 * upload `spectral_data_converter_sklearn-X.Y.Z.tar.gz` previously generated with `setup.py`
 * publish
+
+
+spectral-data-converter-all
+===========================
+
+* increment minimum version to newly released one in `setup.py`
+* add note to `CHANGES.rst`
