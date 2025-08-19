@@ -6,7 +6,8 @@ from typing import List
 from wai.logging import LOGGING_WARNING
 
 from seppl import get_class
-from sdc.api import Spectrum2D, BatchWriter
+from kasperl.api import BatchWriter
+from sdc.api import Spectrum2D
 from sklearn.base import BaseEstimator
 
 

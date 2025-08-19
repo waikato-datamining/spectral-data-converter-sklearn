@@ -4,7 +4,8 @@ from typing import List
 
 from wai.logging import LOGGING_WARNING
 
-from sdc.api import flatten_list, make_list, Filter, Spectrum2D, safe_deepcopy
+from kasperl.api import flatten_list, make_list, Filter, safe_deepcopy
+from sdc.api import Spectrum2D
 from sklearn.base import BaseEstimator
 
 
