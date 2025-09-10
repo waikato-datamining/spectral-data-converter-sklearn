@@ -4,12 +4,12 @@ from typing import List
 
 from wai.logging import LOGGING_WARNING
 
-from kasperl.api import flatten_list, make_list, Filter, safe_deepcopy
+from kasperl.api import flatten_list, make_list, BatchFilter, safe_deepcopy
 from sdc.api import Spectrum2D
 from sklearn.base import BaseEstimator
 
 
-class SklearnPredict(Filter):
+class SklearnPredict(BatchFilter):
     """
     Loads a pickled model and generates predictions on the incoming data, adding it to the sample data.
     """
