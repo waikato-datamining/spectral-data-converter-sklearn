@@ -21,7 +21,6 @@ setup(
     url="https://github.com/waikato-datamining/spectral-data-converter-sklearn",
     classifiers=[
         'Development Status :: 4 - Beta',
-        'License :: OSI Approved :: MIT License',
         'Topic :: Scientific/Engineering',
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
     ],
